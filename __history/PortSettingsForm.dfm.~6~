@@ -1,0 +1,66 @@
+object FormComSettings: TFormComSettings
+  Left = 200
+  Top = 200
+  BorderStyle = bsDialog
+  Caption = 'COMPort'
+  ClientHeight = 274
+  ClientWidth = 465
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -12
+  Font.Name = 'Segoe UI'
+  Font.Style = []
+  Position = poScreenCenter
+  OnCreate = FormCreate
+  TextHeight = 15
+  object cbComPort: TComComboBox
+    Left = 20
+    Top = 20
+    Width = 240
+    Height = 23
+    ComProperty = cpPort
+    Text = 'COM19'
+    Style = csDropDownList
+    ItemIndex = 0
+    TabOrder = 2
+  end
+  object btnOK: TButton
+    Left = 20
+    Top = 228
+    Width = 75
+    Height = 25
+    Caption = 'OK'
+    ModalResult = 1
+    TabOrder = 0
+    OnClick = btnOKClick
+  end
+  object btnCancel: TButton
+    Left = 126
+    Top = 228
+    Width = 75
+    Height = 25
+    Caption = 'Cancel'
+    ModalResult = 2
+    TabOrder = 1
+  end
+  object cbBaudRate: TComComboBox
+    Left = 20
+    Top = 64
+    Width = 145
+    Height = 23
+    ComProperty = cpBaudRate
+    Text = '110'
+    Style = csDropDownList
+    ItemIndex = 1
+    TabOrder = 3
+  end
+  object CheckBox1: TCheckBox
+    Left = 272
+    Top = 144
+    Width = 97
+    Height = 17
+    Caption = 'CheckBox1'
+    TabOrder = 4
+  end
+end

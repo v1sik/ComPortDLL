@@ -1,0 +1,101 @@
+unit PortSettingsForm;
+
+interface
+
+uses
+  Winapi.Windows, System.SysUtils, System.Classes,
+  Vcl.Forms, Vcl.Controls, Vcl.StdCtrls, // <- добавлено StdCtrls для TButton
+  CPortCtl, // TComComboBox
+  CPort;    // TComPort
+
+type
+  TFormComSettings = class(TForm)
+    cbComPort: TComComboBox;
+    btnOK: TButton;
+    btnCancel: TButton;
+    cbBaudRate: TComComboBox;
+    CheckBox1: TCheckBox;
+    procedure FormCreate(Sender: TObject);
+    procedure btnOKClick(Sender: TObject);
+  private
+    FComPort: TComPort;
+  public
+    procedure SetPort(AComPort: TComPort);
+  end;
+
+implementation
+
+{$R *.dfm}
+
+function BaudRateEnumToStr(BR: TBaudRate): string;
+begin
+  case BR of
+    br110: Result := '110';
+    br300: Result := '300';
+    br600: Result := '600';
+    br1200: Result := '1200';
+    br2400: Result := '2400';
+    br4800: Result := '4800';
+    br9600: Result := '9600';
+    br14400: Result := '14400';
+    br19200: Result := '19200';
+    br38400: Result := '38400';
+    br56000: Result := '56000';
+    br57600: Result := '57600';
+    br115200: Result := '115200';
+    br128000: Result := '128000';
+    br256000: Result := '256000';
+  else
+    Result := '9600';
+  end;
+end;
+
+function StrToBaudRateEnum(const S: string): TBaudRate;
+begin
+  if S = '110' then Result := br110
+  else if S = '300' then Result := br300
+  else if S = '600' then Result := br600
+  else if S = '1200' then Result := br1200
+  else if S = '2400' then Result := br2400
+  else if S = '4800' then Result := br4800
+  else if S = '9600' then Result := br9600
+  else if S = '14400' then Result := br14400
+  else if S = '19200' then Result := br19200
+  else if S = '38400' then Result := br38400
+  else if S = '56000' then Result := br56000
+  else if S = '57600' then Result := br57600
+  else if S = '115200' then Result := br115200
+  else if S = '128000' then Result := br128000
+  else if S = '256000' then Result := br256000
+  else Result := br9600;
+end;
+
+procedure TFormComSettings.FormCreate(Sender: TObject);
+begin
+  // Комбо автоматически наполняется доступными портами
+end;
+
+procedure TFormComSettings.SetPort(AComPort: TComPort);
+begin
+  FComPort := AComPort;
+  if Assigned(FComPort) then
+  begin
+    // Связываем компонент с портом — при выборе порт сразу применяется
+    cbComPort.ComPort := FComPort;
+    // Инициализация: если уже был установлен порт, отобразим его
+    cbComPort.Text := FComPort.Port;
+    cbBaudRate.ComPort := FComPort;
+    cbBaudRate.Text := BaudRateEnumToStr(FComPort.BaudRate);
+  end;
+end;
+
+procedure TFormComSettings.btnOKClick(Sender: TObject);
+begin
+  if Assigned(FComPort) then
+    FComPort.Port := cbComPort.Text; // сразу применяем
+    FComPort.BaudRate := StrToBaudRateEnum(cbBaudRate.Text);
+end;
+
+
+end.
+

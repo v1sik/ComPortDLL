@@ -1,0 +1,54 @@
+unit PortSettingsForm;
+
+interface
+
+uses
+  Winapi.Windows, System.SysUtils, System.Classes,
+  Vcl.Forms, Vcl.Controls, Vcl.StdCtrls, // <- добавлено StdCtrls для TButton
+  CPortCtl, // TComComboBox
+  CPort;    // TComPort
+
+type
+  TFormComSettings = class(TForm)
+    cbComPort: TComComboBox;
+    btnOK: TButton;
+    btnCancel: TButton;
+    ComComboBox2: TComComboBox;
+    procedure FormCreate(Sender: TObject);
+  private
+    FComPort: TComPort;
+    procedure ComPortChanged(Sender: TObject);
+  public
+    procedure SetPort(AComPort: TComPort);
+  end;
+
+implementation
+
+{$R *.dfm}
+
+procedure TFormComSettings.FormCreate(Sender: TObject);
+begin
+  // Комбо автоматически наполняется доступными портами
+  ComComboBox1.OnChange := ComPortChanged;
+end;
+
+procedure TFormComSettings.SetPort(AComPort: TComPort);
+begin
+  FComPort := AComPort;
+  if Assigned(FComPort) then
+  begin
+    // Связываем компонент с портом — при выборе порт сразу применяется
+    ComComboBox1.ComPort := FComPort;
+    // Инициализация: если уже был установлен порт, отобразим его
+    ComComboBox1.Text := FComPort.Port;
+  end;
+end;
+
+procedure TFormComSettings.ComPortChanged(Sender: TObject);
+begin
+  if Assigned(FComPort) then
+    FComPort.Port := ComComboBox1.Text; // сразу применяем
+end;
+
+end.
+

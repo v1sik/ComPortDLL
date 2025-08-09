@@ -1,0 +1,27 @@
+library ComPortLib;
+
+uses
+  Winapi.Windows,
+  System.SysUtils,
+  Vcl.Forms,
+  PortSettingsForm in 'PortSettingsForm.pas'; // форма должна быть добавлена в проект
+
+{$R *.res}
+
+procedure ShowComPortSettings(ParentHandle: HWND); stdcall;
+begin
+  Application.Handle := ParentHandle;
+  with TFormComSettings.Create(nil) do
+  try
+    ShowModal;
+  finally
+    Free;
+  end;
+end;
+
+exports
+  ShowComPortSettings;
+
+begin
+end.
+

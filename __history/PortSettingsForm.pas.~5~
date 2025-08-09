@@ -1,0 +1,64 @@
+unit PortSettingsForm;
+
+interface
+
+uses
+  Winapi.Windows, System.SysUtils, System.Classes,
+  Vcl.Forms, Vcl.Controls, Vcl.StdCtrls, // <- добавлено StdCtrls для TButton
+  CPortCtl, // TComComboBox
+  CPort,
+  ComPortLib;    // TComPort
+
+type
+  TFormComSettings = class(TForm)
+    cbComPort: TComComboBox;
+    btnOK: TButton;
+    btnCancel: TButton;
+    cbBaudRate: TComComboBox;
+    CheckBox1: TCheckBox;
+    procedure FormCreate(Sender: TObject);
+    procedure btnOKClick(Sender: TObject);
+  private
+    FComPort: TComPort;
+  public
+    procedure SetPort(AComPort: TComPort);
+  end;
+
+implementation
+
+{$R *.dfm}
+
+
+
+procedure TFormComSettings.FormCreate(Sender: TObject);
+begin
+  // Комбо автоматически наполняется доступными портами
+end;
+
+procedure TFormComSettings.SetPort(AComPort: TComPort);
+begin
+  FComPort := AComPort;
+  if Assigned(FComPort) then
+  begin
+    // Связываем компонент с портом — при выборе порт сразу применяется
+    cbComPort.ComPort := FComPort;
+    // Инициализация: если уже был установлен порт, отобразим его
+    cbComPort.Text := FComPort.Port;
+    cbBaudRate.ComPort := FComPort;
+  end;
+end;
+
+procedure TFormComSettings.btnOKClick(Sender: TObject);
+begin
+  CloseComPort();
+  if Assigned(FComPort) then
+  begin
+    FComPort.Port := cbComPort.Text; // сразу применяем
+    FComPort.BaudRate:= StrToBaudRateEnum(cbBaudRate.Text);
+  end;
+    OpenComPort();
+end;
+
+
+end.
+

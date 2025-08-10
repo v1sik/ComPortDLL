@@ -8,11 +8,12 @@ uses
 procedure ShowComPortSettings(ParentHandle: HWND); stdcall;
 function OpenComPort: Boolean;
 procedure CloseComPort();
-procedure SetDataMessage(const Msg: string); stdcall;
-procedure SetComPort(strComPort: string; strBaudRate: string; strParityBits: Integer );  stdcall;
-function GetDataMessage: string;
-function StrToBaudRateEnum(const S: string): TBaudRate;
-function BaudRateEnumToStr(BR: TBaudRate): string;
+procedure SetDataMessage(Buffer: PByte; BufferSize: Integer); stdcall;
+procedure SetComPort(strComPort: PAnsiChar; strBaudRate: Integer; strParityBits: Integer );  stdcall;
+function GetComPortConfigStr(Buffer: PAnsiChar; BufferSize: Integer): Integer; stdcall;
+function GetDataMessage(Buffer: PByte; BufferSize: Integer): Integer; stdcall;
+function IntToBaudRateEnum(const S: Integer): TBaudRate;
+function BaudRateEnumToInt(BR: TBaudRate): Integer;
 function RadioIndexToParity(Index: Integer): TParityBits;
 function ParityToRadioIndex(P: TParityBits): Integer;
 implementation
@@ -22,46 +23,46 @@ uses
 
   var cpComPort: TComPort;
 
-function BaudRateEnumToStr(BR: TBaudRate): string;
+function BaudRateEnumToInt(BR: TBaudRate): Integer;
 begin
   case BR of
-    br110: Result := '110';
-    br300: Result := '300';
-    br600: Result := '600';
-    br1200: Result := '1200';
-    br2400: Result := '2400';
-    br4800: Result := '4800';
-    br9600: Result := '9600';
-    br14400: Result := '14400';
-    br19200: Result := '19200';
-    br38400: Result := '38400';
-    br56000: Result := '56000';
-    br57600: Result := '57600';
-    br115200: Result := '115200';
-    br128000: Result := '128000';
-    br256000: Result := '256000';
+    br110: Result := 110;
+    br300: Result := 300;
+    br600: Result := 600;
+    br1200: Result := 1200;
+    br2400: Result := 2400;
+    br4800: Result := 4800;
+    br9600: Result := 9600;
+    br14400: Result := 14400;
+    br19200: Result := 19200;
+    br38400: Result := 38400;
+    br56000: Result := 56000;
+    br57600: Result := 57600;
+    br115200: Result := 115200;
+    br128000: Result := 128000;
+    br256000: Result := 256000;
   else
-    Result := '9600';
+    Result := 9600;
   end;
 end;
 
-function StrToBaudRateEnum(const S: string): TBaudRate;
+function IntToBaudRateEnum(const S: Integer): TBaudRate;
 begin
-  if S = '110' then Result := br110
-  else if S = '300' then Result := br300
-  else if S = '600' then Result := br600
-  else if S = '1200' then Result := br1200
-  else if S = '2400' then Result := br2400
-  else if S = '4800' then Result := br4800
-  else if S = '9600' then Result := br9600
-  else if S = '14400' then Result := br14400
-  else if S = '19200' then Result := br19200
-  else if S = '38400' then Result := br38400
-  else if S = '56000' then Result := br56000
-  else if S = '57600' then Result := br57600
-  else if S = '115200' then Result := br115200
-  else if S = '128000' then Result := br128000
-  else if S = '256000' then Result := br256000
+  if S = 110 then Result := br110
+  else if S = 300 then Result := br300
+  else if S = 600 then Result := br600
+  else if S = 1200 then Result := br1200
+  else if S = 2400 then Result := br2400
+  else if S = 4800 then Result := br4800
+  else if S = 9600 then Result := br9600
+  else if S = 14400 then Result := br14400
+  else if S = 19200 then Result := br19200
+  else if S = 38400 then Result := br38400
+  else if S = 56000 then Result := br56000
+  else if S = 57600 then Result := br57600
+  else if S = 115200 then Result := br115200
+  else if S = 128000 then Result := br128000
+  else if S = 256000 then Result := br256000
   else Result := br9600;
 end;
 
@@ -142,31 +143,43 @@ begin
     cpComPort.BaudRate := Baud;
 end;
 
-procedure SetDataMessage(const Msg: string); stdcall;
+procedure SetDataMessage(Buffer: PByte; BufferSize: Integer); stdcall;
+var
+  Msg: AnsiString;
 begin
-  if Assigned(cpComPort) and cpComPort.Connected then
+  if Assigned(cpComPort) and cpComPort.Connected and Assigned(Buffer) and (BufferSize > 0) then
   begin
     try
-      cpComPort.WriteStr(Msg);
+      //  опируем из буфера в AnsiString дл€ WriteStr
+      SetString(Msg, PAnsiChar(Buffer), BufferSize);
+      cpComPort.WriteStr(string(Msg));
     except
       on E: Exception do
         ; // можно логировать: E.Message
     end;
   end;
 end;
-function GetDataMessage: string;
+function GetDataMessage(Buffer: PByte; BufferSize: Integer): Integer; stdcall;
 var
-Buffer: string;
-BytesToRead: Integer;
+  Temp: string;
+  BytesToRead: Integer;
 begin
+  Result := 0;
+
   if Assigned(cpComPort) and cpComPort.Connected then
   begin
     BytesToRead := cpComPort.InputCount;
     if BytesToRead > 0 then
     begin
-      SetLength(Buffer, BytesToRead);
-      cpComPort.ReadStr(Buffer, BytesToRead);
-      Result := Buffer;
+      if BytesToRead > BufferSize then
+        BytesToRead := BufferSize; // чтобы не выйти за пределы
+
+      SetLength(Temp, BytesToRead);
+      cpComPort.ReadStr(Temp, BytesToRead);
+
+      //  опируем данные в буфер
+      Move(PAnsiChar(AnsiString(Temp))^, Buffer^, BytesToRead);
+      Result := BytesToRead; // возвращаем количество байт
     end;
   end;
 end;
@@ -187,12 +200,45 @@ begin
   end;
 end;
 
-procedure SetComPort(strComPort: string; strBaudRate: string; strParityBits: Integer );  stdcall;
+procedure SetComPort(strComPort: PAnsiChar; strBaudRate: Integer; strParityBits: Integer );  stdcall;
+var
+  PortStr: string;
 begin
-    cpComPort.Port := strComPort; // сразу примен€ем
-    cpComPort.BaudRate:= StrToBaudRateEnum(strBaudRate);
+  if Assigned(strComPort) then
+    PortStr := string(strComPort)
+  else
+    PortStr := '';
+    cpComPort.Port := PortStr; // сразу примен€ем
+    cpComPort.BaudRate:= IntToBaudRateEnum(strBaudRate);
     cpComPort.Parity.Bits := RadioIndexToParity(strParityBits);
 end;
+
+function GetComPortConfigStr(Buffer: PAnsiChar; BufferSize: Integer): Integer; stdcall;
+var
+  ConfigStr: AnsiString;
+  ParityStr: Integer;
+begin
+  Result := 0;
+  if (not Assigned(cpComPort)) or (Buffer = nil) or (BufferSize <= 0) then
+    Exit;
+
+  case cpComPort.Parity.Bits of
+    prNone: ParityStr := 0;
+    prOdd: ParityStr := 1;
+    prEven: ParityStr := 2;
+  end;
+
+  ConfigStr := AnsiString(Format('%s, %d, %d',
+    [cpComPort.Port, BaudRateEnumToInt(cpComPort.BaudRate), ParityStr]));
+
+  if Length(ConfigStr) >= BufferSize then
+    SetLength(ConfigStr, BufferSize - 1); // оставл€ем место дл€ нул€
+
+  Move(PAnsiChar(ConfigStr)^, Buffer^, Length(ConfigStr));
+  Buffer[Length(ConfigStr)] := #0;
+  Result := Length(ConfigStr);
+end;
+
 
 initialization
   InitComPort;

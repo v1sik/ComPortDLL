@@ -26,8 +26,10 @@ exports
   ShowComPortSettings,
   OpenComPort,
   CloseComPort,
+  SetComPort,
   SetDataMessage,
-  GetDataMessage;
+  GetDataMessage,
+  GetComPortConfigStr;
 
 begin
 end.

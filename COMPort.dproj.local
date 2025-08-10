@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <BorlandProject>
 	<Transactions>
-    <Transaction>1899.12.30 00:00:00.000.021,C:\Users\v1sik\Documents\Embarcadero\Studio\Projects\COMPort\Unit1.pas=C:\Users\v1sik\Documents\Embarcadero\Studio\Projects\COMPort\ComPortLib.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.649,C:\Users\v1sik\Documents\Embarcadero\Studio\Projects\COMPort\PortSettingsForm.dfm=C:\Users\v1sik\Documents\Embarcadero\Studio\Projects\COMPort\Unit1.dfm</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.601,C:\Users\v1sik\Documents\Embarcadero\Studio\Projects\COMPort\COMPort.dproj=C:\Users\v1sik\Documents\Embarcadero\Studio\Projects\Project5.dproj</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.649,C:\Users\v1sik\Documents\Embarcadero\Studio\Projects\COMPort\PortSettingsForm.pas=C:\Users\v1sik\Documents\Embarcadero\Studio\Projects\COMPort\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.021,C:\Users\v1sik\Documents\Embarcadero\Studio\Projects\COMPort\ComPortLib.pas=C:\Users\v1sik\Documents\Embarcadero\Studio\Projects\COMPort\Unit1.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.192,=C:\Users\v1sik\Documents\Embarcadero\Studio\Projects\COMPort\Unit1.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.019,=C:\Users\v1sik\Documents\Embarcadero\Studio\Projects\COMPort\Unit1.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.601,C:\Users\v1sik\Documents\Embarcadero\Studio\Projects\Project5.dproj=C:\Users\v1sik\Documents\Embarcadero\Studio\Projects\COMPort\COMPort.dproj</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.649,C:\Users\v1sik\Documents\Embarcadero\Studio\Projects\COMPort\Unit1.dfm=C:\Users\v1sik\Documents\Embarcadero\Studio\Projects\COMPort\PortSettingsForm.dfm</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.649,C:\Users\v1sik\Documents\Embarcadero\Studio\Projects\COMPort\Unit1.pas=C:\Users\v1sik\Documents\Embarcadero\Studio\Projects\COMPort\PortSettingsForm.pas</Transaction>
   </Transactions>
 </BorlandProject>

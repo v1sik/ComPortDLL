@@ -47,7 +47,7 @@ begin
     // Инициализация: если уже был установлен порт, отобразим его
     cbComPort.Text := FComPort.Port;
     cbBaudRate.ComPort := FComPort;
-    cbBaudRate.Text := BaudRateEnumToStr(FComPort.BaudRate);
+    cbBaudRate.Text := IntToStr(BaudRateEnumToInt(FComPort.BaudRate));
     rgParity.ItemIndex := ParityToRadioIndex(FComPort.Parity.Bits);
   end;
 end;
@@ -66,12 +66,12 @@ begin
   CloseComPort();
 
   if Assigned(FComPort) then
-    SetComPort(cbComPort.Text, cbBaudRate.Text, rgParity.ItemIndex);
+    SetComPort(PAnsiChar(AnsiString(cbComPort.Text)), StrToInt(cbBaudRate.Text), rgParity.ItemIndex);
 
   if not OpenComPort() then
   begin
     // Если не удалось — откатываем старые настройки
-    SetComPort(OldPort, OldBaud, OldParity);
+    SetComPort( PAnsiChar(AnsiString(OldPort)), StrToInt(OldBaud), OldParity);
     OpenComPort();
     // Оставляем окно открытым
     ModalResult := mrNone;
